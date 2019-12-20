@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if(target.id === 'deadlineSort'){
                 sortOrder(orders, 'deadline');
             }
-            renderOrders();
             toStorage();
+            renderOrders();
         }
     });
 
