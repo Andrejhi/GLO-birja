@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formCustomer = document.getElementById('form-customer'),
         ordersTable = document.getElementById('orders'),
         modalOrder = document.getElementById('order_read'),
-        modalOrderActive = document.getElementById('order_active');
+        modalOrderActive = document.getElementById('order_active'),
+        headTable = document.getElementById('headTable');
 
 
         const orders = JSON.parse(localStorage.getItem('freeOrders')) || [];
@@ -35,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return declOfNum( Math.floor(remaining), ['час', 'часа', 'часов'])
         }
 
+        // рендер таблицы
+
         const renderOrders = () => {
 
             ordersTable.textContent = '';
@@ -50,10 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
+        // модальное окно
+
     const openModal = (numberOrder) => {
         const order = orders[numberOrder];
 
-
+        // реконструируем данные модалки, наначаем данные по умолчанию
         const { title, firstName, email, phone, description, amount, currency, deadline, active = false } = order;
 
         const modal = active ? modalOrderActive : modalOrder;
@@ -86,6 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.addEventListener('click', handlerModal);
     };
 
+    // функции
+
+        // сортировка обьектов в массиве
+
+    const sortOrder = (arr, property) => {
+        arr.sort((a, b) => a[property] > b[property] ? 1 : -1);
+    }
+
     const handlerModal = (event) => {
         const target = event.target;
         const modal = target.closest('.order-modal');
@@ -107,25 +120,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if ( target.classList.contains('.get-order')) {
             order.active = true;
+            // baseAction();
             modal.style.display = 'none';
             renderOrders();
-            
         }
         if ( target.id === 'capitulation') {
             order.active = false;
+            // baseAction();
             modal.style.display = 'none';
             toStorage();
             renderOrders();
-            
         }
         if ( target.id === 'ready') {
             orders.splice(orders.indexOf(order), 1);
+            // baseAction();
             order.active = false;
             modal.style.display = 'none';
             toStorage();
             renderOrders();
         }
     }
+
+    // обработчики
+
+
+    headTable.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (target.classList.contains('head-sort')) {
+
+            if(target.id === 'taskSort'){
+                sortOrder(orders, 'title');
+
+            }
+
+            if(target.id === 'currencySort'){
+                sortOrder(orders, 'currency');
+
+            }
+
+            if(target.id === 'deadlineSort'){
+                sortOrder(orders, 'deadline');
+            }
+            renderOrders();
+            toStorage();
+        }
+    });
 
     ordersTable.addEventListener('click', (event) => {
         const target = event.target;
@@ -135,9 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(targetOrder.dataset.numberOrder);
         }
     });
-
-
-
 
     customer.addEventListener('click', () => {
         blockChoice.style.display = 'none';
@@ -181,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             }
 
+            // debugger;
             formCustomer.reset();
 
             orders.push(obj);
