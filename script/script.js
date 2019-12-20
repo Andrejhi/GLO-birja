@@ -107,17 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if ( target.classList.contains('.get-order')) {
             order.active = true;
-            baseAction();
+            modal.style.display = 'none';
+            renderOrders();
             
         }
         if ( target.id === 'capitulation') {
             order.active = false;
-            baseAction();
+            modal.style.display = 'none';
+            toStorage();
+            renderOrders();
             
         }
         if ( target.id === 'ready') {
             orders.splice(orders.indexOf(order), 1);
-            baseAction();
+            order.active = false;
+            modal.style.display = 'none';
+            toStorage();
+            renderOrders();
         }
     }
 
